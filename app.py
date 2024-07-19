@@ -1,7 +1,9 @@
+
 from flask import Flask ,jsonify,render_template,request
 from flask_cors import CORS
-from chat import get_response
 from airtable import save_rec
+from assistants import get_response
+
 app = Flask( __name__) 
 CORS(app)
 #@app.get("/")
@@ -10,10 +12,12 @@ CORS(app)
 
 @app.post("/predict")
 def predict():
+    
     text = request.get_json().get("message")
+    ip = request.headers['X-Forwarded-For']
     response = get_response(text)
     message = {"answer": response}
-    save_rec(text, response)
+    save_rec(text,response,ip)
     return jsonify(message)
 
 
